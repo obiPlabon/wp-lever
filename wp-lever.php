@@ -36,48 +36,90 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'WP_Lever' ) ) {
-	class WP_Lever {
+    class WP_Lever {
 
-		protected $slug = 'lever';
+        protected $slug = 'lever';
 
-		public function __construct() {
-			add_action( 'init', array( $this, 'register_shortcode' ) );
-		}
+        public function __construct() {
+            add_action( 'init', array( $this, 'register_shortcode' ) );
+        }
 
-		public function register_shortcode() {
-			add_shortcode( $this->slug, array( $this, 'add_shortcode' ) );
-		}
+        public function register_shortcode() {
+            add_shortcode( $this->slug, array( $this, 'add_shortcode' ) );
+        }
 
-		public function add_shortcode( $atts, $content = null ) {
-			$defaults = array(
-				'skip'       => '',
-				'limit'      => '',
-				'location'   => '',
-				'commitment' => '',
-				'team'       => '',
-				'department' => '',
-				'level'      => '',
-				'group'      => '',
-				'template'   => 'general'
-			);
-			$atts = shortcode_atts( $defaults, $atts, $this->slug );
-			$template = $atts['template'];
+        public function add_shortcode( $atts, $content = null ) {
+            $defaults = array(
+                'skip'       => '',
+                'limit'      => '',
+                'location'   => '',
+                'commitment' => '',
+                'team'       => '',
+                'department' => '',
+                'level'      => '',
+                'group'      => '',
+                'template'   => 'general'
+            );
+            $atts = shortcode_atts( $defaults, $atts, $this->slug );
+            $template = $atts['template'];
 
-			unset( $atts['template'] );
+            unset( $atts['template'] );
 
-		}
+            ob_start();
+//            echo '<pre>';
+////            var_dump( $this->str_to_array( 'a,b,, ,c, d' ) );
+//            echo '</pre>';
+            print_r( $this->get_jobs( $atts ) );
+            return ob_get_clean();
+        }
 
-		protected function generate_multi_param_query( $query, $param ) {
-			$query_str = http_build_query( $this->array_from_comma( $param ) );
-			return preg_replace( '/[0-9]/', $query, $query_str );
-		}
+        protected function build_query_str( $params ) {
+            $comma_fields = array(
+                'team',
+                'commitment',
+                'department',
+            );
 
-		protected function array_from_comma( $str ) {
-			return array_filter( explode( ',', $str ) );
-		}
+            $query_str = '';
+            foreach ( $params as $key => $val ) {
+                $val = trim( $val );
 
-		public function get_jobs() {
-			// https://api.lever.co/v0/postings/leverdemo?mode=json
-		}
-	}
+                if ( ! $val ) {
+                    continue;
+                }
+
+                if ( in_array( $key, $comma_fields ) ) {
+                    $query_str .= $this->build_multi_query_str( $key, $val ) . '&';
+                    continue;
+                }
+
+                $query_str .= $key . '=' . urlencode( $val ) . '&';
+            }
+            return rtrim( $query_str, '&' );
+        }
+
+        protected function build_multi_query_str( $var, $value ) {
+            $query_str = '';
+            foreach ( $this->str_to_array( $value ) as $val ) {
+                $val = trim( $val );
+                if ( $val ) {
+                    $query_str .= $var . '=' . urlencode( $val ) . '&';
+                }
+            }
+            return rtrim( $query_str, '&' );
+        }
+
+        protected function str_to_array( $str, $delimiter = ',' ) {
+            return explode( $delimiter, $str );
+        }
+
+        public function get_jobs( $query ) {
+            $query_str = $this->build_query_str( $query );
+            $response = wp_remote_get( 'https://api.lever.co/v0/postings/leverdemo?skip=1&limit=3&mode=json' );
+            $body = wp_remote_retrieve_body( $response );
+            return $response;
+        }
+    }
+
+    new WP_Lever();
 }
