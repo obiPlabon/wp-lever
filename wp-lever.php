@@ -68,7 +68,9 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             unset( $atts['template'], $atts['site'] );
 
             ob_start();
+            echo '<pre>';
             print_r( $this->get_jobs( $site, $atts ) );
+            echo '<pre>';
             return ob_get_clean();
         }
 
@@ -122,7 +124,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 )
             ) );
             $body = wp_remote_retrieve_body( $response );
-            return $body;
+            return json_decode( $body );
         }
     }
 
