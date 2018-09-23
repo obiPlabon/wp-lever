@@ -58,18 +58,17 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 'department' => '',
                 'level'      => '',
                 'group'      => '',
-                'template'   => 'general'
+                'template'   => 'general',
+                'site'       => 'leverdemo',
             );
             $atts = shortcode_atts( $defaults, $atts, $this->slug );
             $template = $atts['template'];
+            $site = $atts['site'];
 
-            unset( $atts['template'] );
+            unset( $atts['template'], $atts['site'] );
 
             ob_start();
-//            echo '<pre>';
-////            var_dump( $this->str_to_array( 'a,b,, ,c, d' ) );
-//            echo '</pre>';
-            print_r( $this->get_jobs( $atts ) );
+            print_r( $this->get_jobs( $site, $atts ) );
             return ob_get_clean();
         }
 
@@ -113,11 +112,17 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             return explode( $delimiter, $str );
         }
 
-        public function get_jobs( $query ) {
+        public function get_jobs( $site, $query ) {
             $query_str = $this->build_query_str( $query );
-            $response = wp_remote_get( 'https://api.lever.co/v0/postings/leverdemo?skip=1&limit=3&mode=json' );
+            $url = 'https://api.lever.co/v0/postings/' . $site . '?' . $query_str;
+            $response = wp_remote_get( $url, array(
+                'timeout' => 120,
+                'headers' => array(
+                    'Accept' => 'application/json'
+                )
+            ) );
             $body = wp_remote_retrieve_body( $response );
-            return $response;
+            return $body;
         }
     }
 
