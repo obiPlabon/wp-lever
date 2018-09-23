@@ -91,7 +91,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             ob_start();
             echo '<pre>';
             print_r( $this->get_jobs( $site, $atts ) );
-            echo '</pre>';
+            echo '<pre>';
             return ob_get_clean();
         }
 
