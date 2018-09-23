@@ -36,18 +36,39 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 if ( ! class_exists( 'WP_Lever' ) ) {
+    /**
+     * Class WP_Lever
+     */
     class WP_Lever {
 
+        /**
+         * Slug used in various places.
+         *
+         * @var string
+         */
         protected $slug = 'lever';
 
+        /**
+         * WP_Lever constructor.
+         */
         public function __construct() {
             add_action( 'init', array( $this, 'register_shortcode' ) );
         }
 
+        /**
+         * Register shortcode.
+         */
         public function register_shortcode() {
             add_shortcode( $this->slug, array( $this, 'add_shortcode' ) );
         }
 
+        /**
+         * Render shortcode output.
+         *
+         * @param array $atts
+         * @param null $content
+         * @return string
+         */
         public function add_shortcode( $atts, $content = null ) {
             $defaults = array(
                 'skip'       => '',
@@ -68,10 +89,18 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             unset( $atts['template'], $atts['site'] );
 
             ob_start();
+            echo '<pre>';
             print_r( $this->get_jobs( $site, $atts ) );
+            echo '</pre>';
             return ob_get_clean();
         }
 
+        /**
+         * Build query string from an associative array.
+         *
+         * @param array $params
+         * @return string
+         */
         protected function build_query_str( $params ) {
             $comma_fields = array(
                 'team',
@@ -97,9 +126,16 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             return rtrim( $query_str, '&' );
         }
 
+        /**
+         * Build query string from comma separated string.
+         *
+         * @param string $var
+         * @param string $value
+         * @return string
+         */
         protected function build_multi_query_str( $var, $value ) {
             $query_str = '';
-            foreach ( $this->str_to_array( $value ) as $val ) {
+            foreach ( explode( ',', $value) as $val ) {
                 $val = trim( $val );
                 if ( $val ) {
                     $query_str .= $var . '=' . urlencode( $val ) . '&';
@@ -108,21 +144,24 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             return rtrim( $query_str, '&' );
         }
 
-        protected function str_to_array( $str, $delimiter = ',' ) {
-            return explode( $delimiter, $str );
-        }
-
-        public function get_jobs( $site, $query ) {
-            $query_str = $this->build_query_str( $query );
+        /**
+         * Fetch jobs from Lever.co.
+         *
+         * @param string $site
+         * @param array $params
+         * @return array|mixed|object
+         */
+        public function get_jobs( $site, $params ) {
+            $query_str = $this->build_query_str( $params );
             $url = 'https://api.lever.co/v0/postings/' . $site . '?' . $query_str;
             $response = wp_remote_get( $url, array(
-                'timeout' => 120,
+                'timeout' => 200,
                 'headers' => array(
                     'Accept' => 'application/json'
                 )
             ) );
             $body = wp_remote_retrieve_body( $response );
-            return $body;
+            return json_decode( $body );
         }
     }
 
