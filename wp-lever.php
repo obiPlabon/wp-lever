@@ -52,14 +52,24 @@ if ( ! class_exists( 'WP_Lever' ) ) {
          * WP_Lever constructor.
          */
         public function __construct() {
-            add_action( 'init', array( $this, 'register_shortcode' ) );
+            add_action( 'init', array( $this, 'init' ) );
         }
 
         /**
-         * Register shortcode.
+         * Initialize.
          */
-        public function register_shortcode() {
+        public function init() {
+            add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
             add_shortcode( $this->slug, array( $this, 'add_shortcode' ) );
+        }
+
+        public function enqueue_scripts() {
+            wp_register_style(
+                $this->slug,
+                plugin_dir_url( __FILE__ ) . 'css/main.css',
+                null,
+                '1.0.0'
+                );
         }
 
         /**
@@ -79,7 +89,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 'department' => '',
                 'level'      => '',
                 'group'      => '',
-                'template'   => 'general',
+                'template'   => 'default',
                 'site'       => 'leverdemo',
             );
             $atts = shortcode_atts( $defaults, $atts, $this->slug );
@@ -88,10 +98,13 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 
             unset( $atts['template'], $atts['site'] );
 
+            $lever_jobs = $this->get_jobs( $site, $atts );
+
             ob_start();
-            echo '<pre>';
-            print_r( $this->get_jobs( $site, $atts ) );
-            echo '<pre>';
+            if ( ! empty( $lever_jobs  ) ) {
+                wp_enqueue_style( $this->slug );
+                include 'templates/default.php';
+            }
             return ob_get_clean();
         }
 

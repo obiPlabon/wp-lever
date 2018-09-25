@@ -1,0 +1,38 @@
+.lever {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 1.5em;
+}
+
+.lever .lever-job {
+    margin-bottom: 1em;
+    overflow: hidden;
+}
+
+.lever  .lever-job-title {
+    font-size: 1.2em;
+    line-height: 1.2;
+    margin: 0;
+    padding-right: 100px;
+    float: left;
+}
+
+.lever .lever-job-apply {
+    display: inline-block;
+    text-decoration: none;
+    color: #fff;
+    background-color: #1cadba;
+    border-color: #1aa4b0;
+    text-transform: uppercase;
+    border-radius: 3px;
+    font-size: 1em;
+    line-height: 1;
+    font-weight: normal;
+    padding: .7em 1.5em;
+    float: right;
+}
+
+.lever .lever-job-apply:hover,
+.lever .lever-job-apply:focus {
+    background-color: #199ba7;
+}
