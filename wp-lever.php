@@ -1,6 +1,6 @@
 <?php
 /**
- * @package WP Lever
+ * @package WP_Lever
  */
 /*
 Plugin Name: WP Lever
@@ -31,152 +31,195 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 Copyright 2018 obiPlabon.
 */
 
+namespace WP_Lever;
+
+use WP_Lever\Services\Job_Posting_Service;
+use WP_Lever\Services\Lever_Service;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+require_once( trailingslashit( __DIR__ ) . '/autoloader.php' );
+
+
 if ( ! class_exists( 'WP_Lever' ) ) {
-    /**
-     * Class WP_Lever
-     */
-    class WP_Lever {
+	/**
+	 * Class WP_Lever
+	 */
+	class WP_Lever {
 
-        /**
-         * Slug used in various places.
-         *
-         * @var string
-         */
-        protected $slug = 'lever';
+		/**
+		 * Slug used in various places.
+		 *
+		 * @var string
+		 */
+		protected $slug = 'lever';
 
-        /**
-         * WP_Lever constructor.
-         */
-        public function __construct() {
-            add_action( 'init', array( $this, 'init' ) );
-        }
+		/**
+		 * WP_Lever constructor.
+		 */
+		public function __construct() {
+			add_action( 'init', [ $this, 'init' ] );
+		}
 
-        /**
-         * Initialize.
-         */
-        public function init() {
-            add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_scripts' ) );
-            add_shortcode( $this->slug, array( $this, 'add_shortcode' ) );
-        }
+		/**
+		 * Initialize.
+		 */
+		public function init() {
+			add_action( 'wp_enqueue_scripts', [ $this, 'enqueue_scripts' ] );
+			add_shortcode( $this->slug, [ $this, 'add_shortcode' ] );
+		}
 
-        public function enqueue_scripts() {
-            wp_register_style(
-                $this->slug,
-                plugin_dir_url( __FILE__ ) . 'css/main.css',
-                null,
-                '1.0.0'
-                );
-        }
+		public function enqueue_scripts() {
+			wp_enqueue_style(
+				$this->slug,
+				plugin_dir_url( __FILE__ ) . 'css/main.css',
+				null,
+				'1.0.1'
+			);
 
-        /**
-         * Render shortcode output.
-         *
-         * @param array $atts
-         * @param null $content
-         * @return string
-         */
-        public function add_shortcode( $atts, $content = null ) {
-            $defaults = array(
-                'skip'       => '',
-                'limit'      => '',
-                'location'   => '',
-                'commitment' => '',
-                'team'       => '',
-                'department' => '',
-                'level'      => '',
-                'group'      => '',
-                'template'   => 'default',
-                'site'       => 'leverdemo',
-            );
-            $atts = shortcode_atts( $defaults, $atts, $this->slug );
-            $template = $atts['template'];
-            $site = $atts['site'];
+			wp_enqueue_script(
+				$this->slug,
+				plugin_dir_url( __FILE__ ) . 'js/filters.js',
+				[ 'jquery' ],
+				'1.0.1',
+				true
+			);
+		}
 
-            unset( $atts['template'], $atts['site'] );
+		/**
+		 * Render shortcode output.
+		 *
+		 * @param array $atts
+		 * @param null $content
+		 *
+		 * @return string
+		 */
+		public function add_shortcode( $atts, $content = null ) {
+			$defaults = [
+				'skip'       => '',
+				'limit'      => '',
+				'location'   => '',
+				'commitment' => '',
+				'team'       => '',
+				'department' => '',
+				'level'      => '',
+				'group'      => '',
+				'template'   => 'default',
+				'site'       => 'leverdemo',
+			];
+			$atts     = shortcode_atts( $defaults, $atts, $this->slug );
+			$site     = $atts['site'];
 
-            $lever_jobs = $this->get_jobs( $site, $atts );
+			unset( $atts['template'], $atts['site'] );
 
-            ob_start();
-            if ( ! empty( $lever_jobs  ) ) {
-                wp_enqueue_style( $this->slug );
-                include 'templates/default.php';
-            }
-            return ob_get_clean();
-        }
+			$active_filters = $this->get_active_filters_from_request();
 
-        /**
-         * Build query string from an associative array.
-         *
-         * @param array $params
-         * @return string
-         */
-        protected function build_query_str( $params ) {
-            $comma_fields = array(
-                'team',
-                'commitment',
-                'department',
-            );
+			$atts = $this->populate_atts_with_filters_from_request( $atts );
 
-            $query_str = '';
-            foreach ( $params as $key => $val ) {
-                $val = trim( $val );
 
-                if ( ! $val ) {
-                    continue;
-                }
+			$filtered_jobs = Lever_Service::get_jobs( $site, $atts );
+			$jobs_by_group = [];
+			if ( null !== $filtered_jobs ) {
+				$jobs_by_group = Job_Posting_Service::group_job_postings_by_team( $filtered_jobs );
+			}
 
-                if ( in_array( $key, $comma_fields ) ) {
-                    $query_str .= $this->build_multi_query_str( $key, $val ) . '&';
-                    continue;
-                }
+			unset( $atts['team'], $atts['location'], $atts['department'], $atts['commitment'] );
+			$full_job_postings = Lever_Service::get_jobs( $site, $atts );
+			$filters           = Job_Posting_Service::get_available_filters( $full_job_postings );
 
-                $query_str .= $key . '=' . urlencode( $val ) . '&';
-            }
-            return rtrim( $query_str, '&' );
-        }
+			ob_start();
+			wp_enqueue_style( $this->slug );
+			include 'templates/default.php';
 
-        /**
-         * Build query string from comma separated string.
-         *
-         * @param string $var
-         * @param string $value
-         * @return string
-         */
-        protected function build_multi_query_str( $var, $value ) {
-            $query_str = '';
-            foreach ( explode( ',', $value) as $val ) {
-                $val = trim( $val );
-                if ( $val ) {
-                    $query_str .= $var . '=' . urlencode( $val ) . '&';
-                }
-            }
-            return rtrim( $query_str, '&' );
-        }
+			return ob_get_clean();
+		}
 
-        /**
-         * Fetch jobs from Lever.co.
-         *
-         * @param string $site
-         * @param array $params
-         * @return array|mixed|object
-         */
-        public function get_jobs( $site, $params ) {
-            $query_str = $this->build_query_str( $params );
-            $url = 'https://api.lever.co/v0/postings/' . $site . '?' . $query_str;
-            $response = wp_remote_get( $url, array(
-                'timeout' => 200,
-                'headers' => array(
-                    'Accept' => 'application/json'
-                )
-            ) );
-            $body = wp_remote_retrieve_body( $response );
-            return json_decode( $body );
-        }
-    }
+		/**
+		 * @param array $atts
+		 *
+		 * @return array
+		 */
+		private function populate_atts_with_filters_from_request( array $atts ) {
+			if ( isset( $_GET['team'] ) ) {
+				$atts['team'] = $_GET['team'];
+			}
 
-    new WP_Lever();
+			if ( isset( $_GET['location'] ) ) {
+				$atts['location'] = $_GET['location'];
+			}
+
+			if ( isset( $_GET['department'] ) ) {
+				$atts['department'] = $_GET['department'];
+			}
+
+			if ( isset( $_GET['commitment'] ) ) {
+				$atts['commitment'] = $_GET['commitment'];
+			}
+
+			return $atts;
+		}
+
+		/**
+		 * @return array
+		 */
+		private function get_active_filters_from_request() {
+			$activeFilters = [];
+
+			if ( isset( $_GET['team'] ) ) {
+				$activeFilters['team'] = $_GET['team'];
+			}
+
+			if ( isset( $_GET['location'] ) ) {
+				$activeFilters['location'] = $_GET['location'];
+			}
+
+			if ( isset( $_GET['department'] ) ) {
+				$activeFilters['department'] = $_GET['department'];
+			}
+
+			if ( isset( $_GET['commitment'] ) ) {
+				$activeFilters['commitment'] = $_GET['commitment'];
+			}
+
+			return $activeFilters;
+		}
+
+		/**
+		 * @param string $current_filter
+		 * @param string $value
+		 *
+		 * @return string
+		 */
+		private function build_filter_url( $current_filter, $value ) {
+			$urlParts = [];
+
+			foreach ( $_GET as $active_filter => $active_filter_value ) {
+				if ( $active_filter === $current_filter ) {
+					continue;
+				}
+				$urlParts[] = $this->build_filter_part( $active_filter, $active_filter_value );
+			}
+
+			if ( $value !== '' ) {
+				$urlParts[] = $this->build_filter_part( $current_filter, $value );
+			}
+
+
+			return sprintf( '?%s', implode( '&', $urlParts ) );
+		}
+
+		/**
+		 * @param string $filter
+		 * @param string $value
+		 *
+		 * @return string
+		 */
+		private function build_filter_part( $filter, $value ) {
+			return sprintf( '%s=%s', urlencode( $filter ), urlencode( $value ) );
+		}
+	}
+
+	new WP_Lever();
 }

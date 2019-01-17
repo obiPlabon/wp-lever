@@ -1,38 +1,227 @@
-.lever {
+@font-face {
+    font-family: Lato;
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Bold.eot");
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Bold.eot?#iefix") format('embedded-opentype');
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Bold.woff") format('woff');
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Bold.ttf") format('truetype');
+    font-style: normal;
+    font-weight: bold;
+}
+
+@font-face {
+    font-family: Lato;
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Regular.eot");
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Regular.eot?#iefix") format('embedded-opentype');
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Regular.woff") format('woff');
+    src: url("https://cdn.lever.co/fonts/Lato2/Lato-Regular.ttf") format('truetype');
+    font-style: normal;
+    font-weight: normal;
+}
+
+.lever-group {
+    margin: 40px 0 !important;
+}
+
+.lever .lever-group-title {
+    font: normal 700 24px/1.4 Lato;
+    color: #808080;
+    margin: 0;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.lever-horizontal-line {
+    margin: 20px auto 20px 0;
+    width: 80px;
+    height: 1px;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #e2e2e2;
+}
+
+.lever .lever-categories {
+    position: relative;
+    display: block;
     list-style: none;
     padding: 0;
-    margin: 0 0 1.5em;
+    margin: 0 !important;
+}
+
+.lever .lever-categories li {
+    position: relative;
+    display: inline-block;
+    color: #808080;
+    font: normal 700 12px/1.4 Lato;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 15px;
 }
 
 .lever .lever-job {
+    position: relative;
     margin-bottom: 1em;
-    overflow: hidden;
 }
 
-.lever  .lever-job-title {
-    font-size: 1.2em;
-    line-height: 1.2;
+.lever-job .lever-job-info {
+    position: relative;
+    display: inline-block;
+    width: 79%;
+}
+
+.lever .lever-job-title {
     margin: 0;
-    padding-right: 100px;
-    float: left;
+    font: normal 400 24px/1.4 Lato;
+    color: #515357;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.lever .lever-job-title a {
+    color: #515357;
+    text-decoration: none;
+}
+
+.lever .lever-job-title a:hover {
+    color: #0073aa;
+}
+
+.lever-job .lever-job-action {
+    position: relative;
+    display: inline-block;
+    vertical-align: top;
+    width: 20%;
+    text-align: right;
+}
+
+.lever-job .lever-job-action a {
+    color: white !important;
 }
 
 .lever .lever-job-apply {
-    display: inline-block;
-    text-decoration: none;
-    color: #fff;
-    background-color: #1cadba;
-    border-color: #1aa4b0;
+    background: #E91E63;
+    border-color: #dd1d5e;
+    color: #ffffff;
+    font: normal 700 14px/1.4 Lato;
     text-transform: uppercase;
+    height: auto;
+    position: relative;
+    display: inline-block;
+    margin: 0;
+    text-decoration: none !important;
     border-radius: 3px;
-    font-size: 1em;
-    line-height: 1;
-    font-weight: normal;
-    padding: .7em 1.5em;
-    float: right;
+    padding: 5px 25px;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
 
 .lever .lever-job-apply:hover,
 .lever .lever-job-apply:focus {
-    background-color: #199ba7;
+    background-color: #a31545;
+    text-decoration: none;
+}
+
+.lever-filters {
+    line-height: 40px;
+    max-width: 100%;
+}
+
+.lever-filters .filter-by-label {
+    color: #808080;
+    font: normal 700 16px/1.4 Lato;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-right: 20px;
+}
+
+.lever-filters .filter {
+    display: inline-block;
+    margin-right: 20px;
+    max-width: 100%;
+    outline: none;
+    position: relative;
+    background: #ebecf0;
+    color: #9696a2;
+    border: 1px solid #dfe0e4;
+    line-height: 1;
+    vertical-align: bottom;
+}
+
+.lever-filters .filter .filter-type:hover {
+    background: #dfe0e4;
+    color: #5a5a61;
+    cursor: pointer;
+}
+
+.lever-filters .filter-type {
+    font: normal 700 14px/1.4 Lato;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    color: #555659;
+    max-width: 100%;
+    overflow: hidden;
+    padding: 5px 41px 5px 15px;
+    position: relative;
+    -o-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+}
+
+.lever-filters .filter-type:after {
+    content: "";
+    position: absolute;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #555659;
+    right: 15px;
+    top: 40%;
+}
+
+.lever-filters .filter-values {
+    display: none;
+    position: absolute;
+    background: #fff;
+    color: #515357;
+    font: normal 400 16px/1.8 Lato;
+    box-shadow: 1px 1px 0 1px #00000036;
+    text-align: left;
+    white-space: nowrap;
+    padding: 8px 0;
+    border-radius: 3px;
+    top: 110%;
+    left: -1px;
+    border: 1px solid #dcdcdc;
+    overflow-y: auto;
+    max-height: 300px;
+    z-index: 1;
+}
+
+.lever-filters .filter-values a {
+    display: block;
+    padding: 4px 32px;
+    position: relative;
+    color: #333;
+    text-decoration: none;
+}
+
+.lever-filters .filter-values a:hover,
+.lever-filters .filter-values a:focus,
+.lever-filters .filter-values a:active {
+    background: #E91E63;
+    color: white;
+    cursor: pointer;
+}
+
+.lever-filters .filter-values.active {
+    display: block;
+}
+
+.lever-filters .filter-value.active {
+    background: #ccc;
 }
