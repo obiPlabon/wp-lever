@@ -36,3 +36,40 @@
 .lever .lever-job-apply:focus {
     background-color: #199ba7;
 }
+
+.lever .job-content {
+    clear: both;
+    display: none;
+}
+
+.lever .lever-job.active .job-content {
+    display: inherit;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.lever h3 {
+    border-bottom: 1px solid;
+    margin-bottom: 15px;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.lever.expandable .lever-job:before {
+   font-family: 'Glyphicons Halflings';
+   content: "\e114";
+   float: left;
+   transition: all 0.5s;
+   padding-right: 10px;
+}
+
+.lever.expandable .lever-job.active:before {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+    transform: rotate(180deg);
+    margin-right: 5px;
+}
+
+.lever.expandable .lever-job-title {
+    cursor: pointer;
+}

@@ -10,11 +10,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 ?>
 
-<ul class="lever">
-    <?php foreach ( $lever_jobs as $lever_job ) : ?>
-    <li class="lever-job" id="<?php echo esc_attr( $lever_job->id ); ?>">
-        <h2 class="lever-job-title"><?php echo esc_html( $lever_job->text ); ?></h2>
-        <a href="<?php echo esc_url( $lever_job->hostedUrl ); ?>" target="_blank" class="lever-job-apply"><?php esc_html_e( 'Apply', 'wp-lever' ); ?></a>
-    </li>
+<ul class="lever <?php echo $expandable ? "expandable" :  "" ?>">
+    <?php foreach ( $lever_jobs as $offer ) : ?>
+        <?php include 'job-loop.php'; ?>
     <?php endforeach; ?>
 </ul>

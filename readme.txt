@@ -26,3 +26,8 @@ Yes, you can use any this plugin with any theme you want.
 
 = 1.0.0 =
 * Initial release
+
+= 1.1.0 =
+* Added parameters:
+    - group_by_city: if "true" jobs are grouped by city
+    - expandable: if "true" jobs can be expanded to show the description
