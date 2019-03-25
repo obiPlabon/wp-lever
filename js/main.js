@@ -1,6 +1,6 @@
 jQuery(document).ready(function($){
 
-    $('.lever .lever-job-title').click( function() {
+    $('.lever').on('click', '.lever-job-title', function() {
         if( $(this).closest('.lever-job').hasClass('active') ) {
             $('.lever-job').removeClass('active');
         } else {
