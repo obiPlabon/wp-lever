@@ -7,6 +7,9 @@
 .lever .lever-job {
     margin-bottom: 1em;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
 }
 
 .lever  .lever-job-title {
@@ -14,25 +17,46 @@
     line-height: 1.2;
     margin: 0;
     padding-right: 100px;
-    float: left;
 }
 
 .lever .lever-job-apply {
-    display: inline-block;
-    text-decoration: none;
-    color: #fff;
-    background-color: #1cadba;
-    border-color: #1aa4b0;
-    text-transform: uppercase;
-    border-radius: 3px;
-    font-size: 1em;
-    line-height: 1;
-    font-weight: normal;
-    padding: .7em 1.5em;
-    float: right;
+    margin-left: auto;
 }
 
-.lever .lever-job-apply:hover,
-.lever .lever-job-apply:focus {
-    background-color: #199ba7;
+
+
+.lever .job-content {
+    clear: both;
+    display: none;
+}
+
+.lever .lever-job.active .job-content {
+    display: inline-block;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.lever h3 {
+    border-bottom: 1px solid;
+    margin-bottom: 15px;
+    font-weight: bold;
+    margin-top: 30px;
+}
+
+.lever.expandable .lever-job:before {
+   font-family: 'FontAwesome';
+   content: "\f106";
+   transition: all 0.5s;
+   padding-right: 10px;
+}
+
+.lever.expandable .lever-job.active:before {
+	-webkit-transform: rotate(180deg);
+	-moz-transform: rotate(180deg);
+    transform: rotate(180deg);
+    margin-right: 5px;
+}
+
+.lever.expandable .lever-job-title {
+    cursor: pointer;
 }

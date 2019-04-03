@@ -6,7 +6,7 @@
 Plugin Name: WP Lever
 Plugin URI: https://github.com/obiPlabon/wp-lever
 Description: Shortcode for Lever.co api. Super easily show job listing from lever.co
-Version: 0.0.1
+Version: 1.1.0
 Author: obiPlabon
 Author URI: https://obiPlabon.im/
 License: GPLv2 or later
@@ -68,8 +68,17 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 $this->slug,
                 plugin_dir_url( __FILE__ ) . 'css/main.css',
                 null,
-                '1.0.0'
+                '1.1.0'
                 );
+
+            wp_register_script(
+                $this->slug . 'js',
+                plugin_dir_url( __FILE__ ) . 'js/main.js',
+                null,
+                '1.1.0'
+                );
+
+            wp_enqueue_script($this->slug . 'js');
         }
 
         /**
@@ -91,6 +100,9 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 'group'      => '',
                 'template'   => 'default',
                 'site'       => 'leverdemo',
+                'mode'       => 'json',
+                'group_by_city'   => false,
+                'expandable' => false
             );
             $atts = shortcode_atts( $defaults, $atts, $this->slug );
             $template = $atts['template'];
@@ -99,11 +111,20 @@ if ( ! class_exists( 'WP_Lever' ) ) {
             unset( $atts['template'], $atts['site'] );
 
             $lever_jobs = $this->get_jobs( $site, $atts );
+            $expandable = $atts['expandable'] == 'true' ? true : false;
 
             ob_start();
             if ( ! empty( $lever_jobs  ) ) {
                 wp_enqueue_style( $this->slug );
-                include 'templates/default.php';
+
+                $group_by_city =  $atts['group_by_city'];
+                if ($group_by_city == 'true' ) {
+                    $renderTemplate ='group_by_city';
+                } else {
+                    $renderTemplate ='default';
+                }
+
+                include 'templates/' . $renderTemplate . '.php';
             }
             return ob_get_clean();
         }
@@ -174,7 +195,26 @@ if ( ! class_exists( 'WP_Lever' ) ) {
                 )
             ) );
             $body = wp_remote_retrieve_body( $response );
-            return json_decode( $body );
+            $json = json_decode( $body );
+
+            $group_by_city =  $params['group_by_city'];
+
+            // TODO: Improve this code
+            if($json && $group_by_city == 'true') {
+                $bycity = [];
+                foreach ($json as $offer) {
+                    $loc = !empty($offer->categories->location) ? $offer->categories->location : '';
+                    if(!isset($bycity[$loc])) {
+                        $bycity[$loc] = [];
+                    }
+
+                    $bycity[$loc][] = $offer;
+                }
+
+                return $bycity;
+            }
+
+            return $json;
         }
     }
 
