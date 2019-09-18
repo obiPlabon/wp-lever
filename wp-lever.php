@@ -56,6 +56,13 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		 */
 		protected $slug = 'lever';
 
+		protected $filters = [
+			'team',
+			'department',
+			'location',
+			'commitment'
+		];
+
 		/**
 		 * WP_Lever constructor.
 		 */
@@ -98,19 +105,19 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		 */
 		public function add_shortcode( $atts, $content = null ) {
 			$defaults = [
-				'skip'                 => '',
-				'limit'                => '',
-				'location'             => '',
-				'commitment'           => '',
-				'team'                 => '',
-				'department'           => '',
-				'level'                => '',
-				'group'                => '',
-				'template'             => 'default',
-				'site'                 => 'leverdemo',
-				'filters'              => 'enabled',
-				'primary-color'        => null,
-				'primary-text-color'   => null,
+				'skip'               => '',
+				'limit'              => '',
+				'location'           => '',
+				'commitment'         => '',
+				'team'               => '',
+				'department'         => '',
+				'level'              => '',
+				'group'              => '',
+				'template'           => 'default',
+				'site'               => 'leverdemo',
+				'filters'            => 'enabled',
+				'primary-color'      => null,
+				'primary-text-color' => null,
 			];
 			$atts     = shortcode_atts( $defaults, $atts, $this->slug );
 			$site     = $atts['site'];
@@ -120,11 +127,13 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 			$filters        = null;
 			$filters_status = $atts['filters'] === 'enabled';
 
+			$static_filters = $this->get_static_filters( $atts );
+
 			if ( $filters_status ) {
 				$active_filters = $this->get_active_filters_from_request();
 			}
 
-			$atts = $this->populate_atts_with_filters_from_request( $atts );
+			$atts = $this->populate_atts_with_filters_from_request( $static_filters, $atts );
 
 			$filtered_jobs = Lever_Service::get_jobs( $site, $atts );
 			$jobs_by_group = [];
@@ -132,7 +141,11 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				$jobs_by_group = Job_Posting_Service::group_job_postings_by_team( $filtered_jobs );
 			}
 
-			unset( $atts['team'], $atts['location'], $atts['department'], $atts['commitment'] );
+			foreach ( $this->filters as $filter ) {
+				if ( ! isset( $static_filters[ $filter ] ) ) {
+					unset( $atts[ $filter ] );
+				}
+			}
 
 			if ( $filters_status ) {
 				$full_job_postings = Lever_Service::get_jobs( $site, $atts );
@@ -147,28 +160,35 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		}
 
 		/**
+		 * @param array $static_filters
 		 * @param array $atts
 		 *
 		 * @return array
 		 */
-		private function populate_atts_with_filters_from_request( array $atts ) {
-			if ( isset( $_GET['team'] ) ) {
-				$atts['team'] = $_GET['team'];
-			}
-
-			if ( isset( $_GET['location'] ) ) {
-				$atts['location'] = $_GET['location'];
-			}
-
-			if ( isset( $_GET['department'] ) ) {
-				$atts['department'] = $_GET['department'];
-			}
-
-			if ( isset( $_GET['commitment'] ) ) {
-				$atts['commitment'] = $_GET['commitment'];
+		private function populate_atts_with_filters_from_request( array $static_filters, array $atts ) {
+			foreach ( $this->filters as $filter ) {
+				if ( ! isset( $static_filters[ $filter ] ) && isset( $_GET[ $filter ] ) ) {
+					$atts[ $filter ] = $_GET[ $filter ];
+				}
 			}
 
 			return $atts;
+		}
+
+		/**
+		 * @param $atts
+		 *
+		 * @return array
+		 */
+		private function get_static_filters( array $atts ) {
+			$static_filters = [];
+			foreach ( $this->filters as $filter ) {
+				if ( $atts[ $filter ] != "" ) {
+					$static_filters[ $filter ] = $atts[ $filter ];
+				}
+			}
+
+			return $static_filters;
 		}
 
 		/**
@@ -177,20 +197,10 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		private function get_active_filters_from_request() {
 			$activeFilters = [];
 
-			if ( isset( $_GET['team'] ) ) {
-				$activeFilters['team'] = $_GET['team'];
-			}
-
-			if ( isset( $_GET['location'] ) ) {
-				$activeFilters['location'] = $_GET['location'];
-			}
-
-			if ( isset( $_GET['department'] ) ) {
-				$activeFilters['department'] = $_GET['department'];
-			}
-
-			if ( isset( $_GET['commitment'] ) ) {
-				$activeFilters['commitment'] = $_GET['commitment'];
+			foreach ( $this->filters as $filter ) {
+				if ( isset( $_GET[ $filter ] ) ) {
+					$activeFilters[ $filter ] = $_GET[ $filter ];
+				}
 			}
 
 			return $activeFilters;
