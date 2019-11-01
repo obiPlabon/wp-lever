@@ -20,8 +20,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                 <div class="lever-job" id="<?php echo esc_attr( $job->get_id() ); ?>">
                     <div class="lever-job-info">
                         <h4 class="lever-job-title">
-                            <a href="<?php echo esc_url( $job->get_description_url() ); ?>"
-                               target="_blank"><?php echo esc_html( $job->get_title() ); ?></a>
+                            <a href="<?php echo $this->build_job_url( $job->get_id() ); ?>"><?php echo esc_html( $job->get_title() ); ?></a>
                         </h4>
                         <div>
                             <ul class="lever-categories">
@@ -47,7 +46,7 @@ if ( ! defined( 'ABSPATH' ) ) {
                         </div>
                     </div>
                     <div class="lever-job-action">
-                        <a href="<?php echo esc_url( $job->get_description_url() ); ?>" target="_blank"
+                        <a href="<?php echo $this->build_job_url( $job->get_id() ); ?>"
                            class="lever-job-apply"><?php esc_html_e( 'Apply', 'wp-lever' ); ?></a>
                     </div>
                 </div>

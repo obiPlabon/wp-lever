@@ -30,6 +30,16 @@ class Api_Response_Transformer {
 		return self::transform_from_array( $response );
 	}
 
+	public static function transform_single( $jsonResponse ) {
+		$response = json_decode( $jsonResponse, true );
+
+		if ( empty( $response ) ) {
+			return null;
+		}
+
+		return self::transform_item( $response );
+	}
+
 	/**
 	 * @param array $response
 	 *
@@ -79,6 +89,20 @@ class Api_Response_Transformer {
 		$description->set_plain( isset( $item['descriptionPlain'] ) ? $item['descriptionPlain'] : '' );
 
 		$job_posting->set_description( $description );
+
+
+		if ( isset( $item['lists'] ) ) {
+			$list_items = [];
+			foreach ( $item['lists'] as $list_item ) {
+				$li = new List_Item();
+				$li->set_title( $list_item['text'] );
+				$li->set_content( $list_item['content'] );
+				$list_items[] = $li;
+			}
+
+			$job_posting->set_lists( $list_items );
+		}
+
 
 		$categories = new Categories();
 		$categories->set_commitment( isset( $item['categories']['commitment'] ) ? $item['categories']['commitment'] : null );

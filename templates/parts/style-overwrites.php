@@ -16,6 +16,14 @@ if ( ! defined( 'ABSPATH' ) ) {
         background: <?php echo $atts['primary-color']; ?> !important;
     }
 
+    .lever-job-header{
+        border-color: <?php echo $atts['primary-color']; ?> !important;
+    }
+
+    .lever-apply-form input[type='checkbox']:checked:after{
+        color: <?php echo $atts['primary-color']; ?> !important;
+    }
+
     <?php endif; ?>
 
     <?php if( !empty($atts['primary-text-color'])) : ?>
@@ -28,6 +36,10 @@ if ( ! defined( 'ABSPATH' ) ) {
     .lever .lever-job-apply:hover,
     .lever .lever-job-apply:focus {
         filter: brightness(65%);
+    }
+
+    .lever-apply-form input[type='checkbox']:checked:after{
+        background-color: <?php echo $atts['primary-text-color']; ?> !important;
     }
 
     <?php endif; ?>
