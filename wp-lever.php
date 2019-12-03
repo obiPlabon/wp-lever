@@ -87,14 +87,14 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"main",
 				plugin_dir_url( __FILE__ ) . 'css/main.css',
 				null,
-				'1.0.2'
+				'1.0.4'
 			);
 
 			wp_enqueue_script(
 				"file_input",
 				plugin_dir_url( __FILE__ ) . 'js/file_input.js',
 				[ 'jquery' ],
-				'1.0.2',
+				'1.0.4',
 				true
 			);
 
@@ -102,7 +102,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"filters",
 				plugin_dir_url( __FILE__ ) . 'js/filters.js',
 				[ 'jquery' ],
-				'1.0.2',
+				'1.0.4',
 				true
 			);
 		}
@@ -143,7 +143,6 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				$result = Lever_Service::send_application( $atts['site'], $_GET['j_id'], $api_key, $silent );
 
 				// TODO: if succeed and silent, and have enabled a custom mail, then send the custom mail.
-				// redirect to landing page, so that we cannot refresh the page
 				return $this->redirect_to_application_result( $result, $_GET["j_id"] );
 			}
 
@@ -348,21 +347,18 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		private function redirect_to_application_result( $result, $job_id ) {
 			if ( $result ) {
 				$page = add_query_arg( [
-					"j_id"   => $job_id,
+					"j_id"  => $job_id,
 					"wpl_s" => 1
 				], get_post_permalink( get_queried_object_id() ) );
 
 			} else {
 				$page = add_query_arg( [
-					"j_id"   => $job_id,
+					"j_id"  => $job_id,
 					"wpl_s" => 0
 				], get_post_permalink( get_queried_object_id() ) );
 			}
 
-			$result = wp_redirect( $page );
-			var_dump( $result );
-			echo $page;
-			if ( $result ) {
+			if ( wp_redirect( $page ) ) {
 				exit;
 			}
 

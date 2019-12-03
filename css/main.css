@@ -116,6 +116,15 @@
     color: white !important;
 }
 
+.lever-job-section h5 {
+    font-size: 1.5em;
+}
+
+.lever-apply-section h4 {
+    font-size: 1.125em;
+    color: #515357;
+}
+
 .lever .lever-job-apply {
     background: #E91E63;
     border-color: #dd1d5e;
@@ -331,7 +340,7 @@
 
 .lever-apply-form ul {
     list-style: none;
-    margin: 0;
+    margin: 0 !important;
     padding: 0;
 }
 
@@ -343,6 +352,7 @@
     width: 29%;
     display: inline-block;
     line-height: 1;
+    font-weight: 400;
 }
 
 .lever-apply-form .custom-question label {
@@ -411,6 +421,8 @@
 
 .lever-apply-section select {
     width: 100%;
+    max-width: 100%;
+    height: 40px;
     color: #55575b;
     background-color: #eee;
     display: inline-block;
@@ -420,6 +432,7 @@
     border: 1px solid #ccc;
     -moz-appearance: none;
     -webkit-appearance: none;
+    line-height: 1;
 }
 
 .lever-apply-section select::-ms-expand {
@@ -434,7 +447,7 @@
     position: absolute;
     content: "";
     right: 15px;
-    top: 15px;
+    top: 10px;
     height: 15px;
     width: 15px;
     border-bottom: 1px solid #7f838a;
