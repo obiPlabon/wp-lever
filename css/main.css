@@ -117,7 +117,7 @@
 }
 
 .lever-job-section h5 {
-    font-size: 1.5em;
+    font-size: 18px;
 }
 
 .lever-apply-section h4 {
@@ -304,6 +304,7 @@
 
 .application-question input {
     width: 100%;
+    max-width: 100%;
     border-radius: 8px;
 }
 
@@ -334,6 +335,7 @@
 
 .lever-apply-form textarea {
     width: 100%;
+    max-width: 100%;
     min-height: 200px;
     resize: vertical;
 }
@@ -395,6 +397,18 @@
     padding-left: 35px;
     line-height: 1em;
     width: auto !important;
+}
+
+.consent-section a {
+    color: #205ecc;
+}
+
+.consent-section a:hover {
+    text-decoration: underline;
+}
+
+.consent-section small {
+    font-size: 15px
 }
 
 .lever-file-input {

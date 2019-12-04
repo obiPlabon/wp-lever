@@ -87,14 +87,14 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"main",
 				plugin_dir_url( __FILE__ ) . 'css/main.css',
 				null,
-				'1.0.4'
+				'1.0.5'
 			);
 
 			wp_enqueue_script(
 				"file_input",
 				plugin_dir_url( __FILE__ ) . 'js/file_input.js',
 				[ 'jquery' ],
-				'1.0.4',
+				'1.0.5',
 				true
 			);
 
@@ -102,7 +102,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"filters",
 				plugin_dir_url( __FILE__ ) . 'js/filters.js',
 				[ 'jquery' ],
-				'1.0.4',
+				'1.0.5',
 				true
 			);
 		}
