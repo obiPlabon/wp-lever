@@ -232,7 +232,6 @@ class Lever_Service {
 					throw new \Exception( "failed to upload " . $field_name . " was uploaded partially" );
 					break;
 				case UPLOAD_ERR_NO_FILE:
-					continue;
 					break;
 				default:
 					throw new \Exception( "failed to upload " . $field_name . " internal server error" );

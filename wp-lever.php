@@ -47,6 +47,8 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 	 * Class WP_Lever
 	 */
 	class WP_Lever {
+		const VERSION = "1.0.7";
+
 		/**
 		 * Slug used in various places.
 		 *
@@ -87,14 +89,14 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"main",
 				plugin_dir_url( __FILE__ ) . 'css/main.css',
 				null,
-				'1.0.6'
+				self::VERSION,
 			);
 
 			wp_enqueue_script(
 				"file_input",
 				plugin_dir_url( __FILE__ ) . 'js/file_input.js',
 				[ 'jquery' ],
-				'1.0.6',
+				self::VERSION,
 				true
 			);
 
@@ -102,7 +104,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"filters",
 				plugin_dir_url( __FILE__ ) . 'js/filters.js',
 				[ 'jquery' ],
-				'1.0.6',
+				self::VERSION,
 				true
 			);
 		}
