@@ -87,14 +87,14 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"main",
 				plugin_dir_url( __FILE__ ) . 'css/main.css',
 				null,
-				'1.0.5'
+				'1.0.6'
 			);
 
 			wp_enqueue_script(
 				"file_input",
 				plugin_dir_url( __FILE__ ) . 'js/file_input.js',
 				[ 'jquery' ],
-				'1.0.5',
+				'1.0.6',
 				true
 			);
 
@@ -102,7 +102,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 				"filters",
 				plugin_dir_url( __FILE__ ) . 'js/filters.js',
 				[ 'jquery' ],
-				'1.0.5',
+				'1.0.6',
 				true
 			);
 		}
@@ -136,7 +136,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 			$api_key    = esc_attr( get_option( 'api_key', '' ) );
 
 			if ( isset( $_GET["wpl_s"] ) && isset( $_GET["j_id"] ) && $_GET["j_id"] !== "" ) {
-				return $this->result_page( $_GET["wpl_s"], $_GET["j_id"] );
+				return $this->result_page( $atts, $_GET["wpl_s"], $_GET["j_id"] );
 			}
 
 			if ( $_SERVER['REQUEST_METHOD'] === 'POST' && isset( $_GET["apply"] ) && isset( $_GET["j_id"] ) && $_GET["j_id"] !== "" ) {
@@ -365,7 +365,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 			echo "failed to redirect";
 		}
 
-		private function result_page( $status, $job_id ) {
+		private function result_page( $atts, $status, $job_id ) {
 			ob_start();
 			wp_enqueue_style( $this->slug );
 
