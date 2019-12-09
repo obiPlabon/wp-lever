@@ -85,22 +85,18 @@ class Job_Posting_Service {
 			$commitment = mb_strtolower($job_posting->get_categories()->get_commitment());
 
 			if ( isset( $atts["location"] ) && $atts["location"] !== "" && mb_strtolower($atts["location"]) != $location ) {
-				echo $location . ' ' . $atts['location'];
 				continue;
 			}
 
 			if ( isset( $atts["department"] ) && $atts["department"] !== "" && mb_strtolower($atts["department"]) != $department ) {
-				echo $department . ' ' . $atts['department'];
 				continue;
 			}
 
 			if ( isset( $atts["team"] ) && $atts["team"] !== "" && mb_strtolower($atts["team"]) != $team ) {
-				echo $team . ' ' . $atts['team'];
 				continue;
 			}
 
 			if ( isset( $atts["commitment"] ) && $atts["commitment"] !== "" && mb_strtolower($atts["commitment"]) != $commitment ) {
-				echo $commitment . ' ' . $atts['commitment'];
 				continue;
 			}
 

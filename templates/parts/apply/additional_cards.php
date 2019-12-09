@@ -10,11 +10,6 @@ $additionalCardsTemplate = json_decode( $additionalCardsTemplateJson );
 if ( $additionalCardsTemplate === null ) {
 	return;
 }
-/*
-echo "<pre>";
-var_dump( $additionalCardsTemplate );
-echo "</pre>";
-*/
 ?>
 <div class="lever-apply-section">
     <h4><?php echo $additionalCardsTemplate->text; ?></h4>
