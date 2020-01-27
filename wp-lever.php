@@ -35,6 +35,7 @@ namespace WP_Lever;
 
 use WP_Lever\Services\Job_Posting_Service;
 use WP_Lever\Services\Lever_Service;
+use WP_Lever\Services\Schema_Service;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -47,7 +48,7 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 	 * Class WP_Lever
 	 */
 	class WP_Lever {
-		const VERSION = "1.0.9";
+		const VERSION = "1.1.0";
 
 		/**
 		 * Slug used in various places.
@@ -406,6 +407,11 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 		private function job_description_page( $atts, $job_id ) {
 			$job = Lever_Service::get_job( $atts['site'], $job_id );
 
+			$json_ld_string = Schema_Service::getJsonLDString( $job );
+			add_action( 'wp_footer', function () use ( $json_ld_string ) {
+				self::json_ld_schema( $json_ld_string );
+			} );
+
 			ob_start();
 			wp_enqueue_style( $this->slug );
 			include 'templates/job.php';
@@ -452,6 +458,20 @@ if ( ! class_exists( 'WP_Lever' ) ) {
 			include 'templates/default.php';
 
 			return ob_get_clean();
+		}
+
+		/**
+		 * @param string $json_ld_job_posting
+		 */
+		private function json_ld_schema( $json_ld_job_posting ) {
+			if ( $json_ld_job_posting == "" ) {
+				return;
+			}
+			?>
+            <script type="application/ld+json"><?php
+				echo $json_ld_job_posting;
+				?></script>
+			<?php
 		}
 
 		/**
