@@ -3,7 +3,7 @@ Contributors: obiPlabon
 Tags: wp-lever, lever.co, job-listing
 Requires at least: 4.5
 Tested up to: 4.9
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 5.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -26,3 +26,8 @@ Yes, you can use any this plugin with any theme you want.
 
 = 1.0.0 =
 * Initial release
+
+= 1.0.1 =
+* added shortcode parameter - filters="disabled", available options: { enabled, disabled }, default : { enabled }
+* added shortcode parameter - primary-color="#E91E63"
+* added shortcode parameter - primary-text-color="white"
